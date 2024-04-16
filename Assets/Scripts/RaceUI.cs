@@ -3,26 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.Netcode;
 
-public class RaceUI : MonoBehaviour
+public class RaceUI : NetworkBehaviour
 {
-    public TextMeshProUGUI spdText;
+    public TextMeshProUGUI pointsText;
+    public TextMeshProUGUI timerText;
     public TextMeshProUGUI posText;
 
-    public GameObject player;
-    public Rigidbody playerRB;
-
-    private void Awake()
-    {
-        player.GetComponent<CarController>();
-        playerRB.GetComponent<Rigidbody>();
-    }
+    public float elapsedTime;
+    public float points;
+    public NetworkVariable<float> sincPoints = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     private void Update()
     {
-        var vel = playerRB.velocity;
-        var speed = vel.magnitude;
+        if (!IsOwner)
+        {
+            return;
+        }
+        elapsedTime += Time.deltaTime;
+        timerText.text = "Time: " + elapsedTime.ToString("F1");
+    }
 
-        spdText.text = vel.ToString();
+    public void AtualizarPontos() 
+    {
+        if (!IsOwner)
+        {
+            return;
+        }
+        points += 1000 / elapsedTime;
+        sincPoints.Value = points;
+        pointsText.text = "Pontos: " + points.ToString("F0");
     }
 }

@@ -33,6 +33,8 @@ public class NetworkSceneSetup : NetworkBehaviour
                 NetworkObject networkObject = playerTransform.GetComponent<NetworkObject>();
 
                 networkObject.SpawnAsPlayerObject(id, true);
+
+                playerTransform.transform.position = new Vector3(Random.Range(-10, 10), 0, 0);
             }
         }
     }

@@ -15,6 +15,7 @@ public class CarController : NetworkBehaviour
     private float currentBreakForce;
     [SerializeField] private bool isBreaking;
     [SerializeField] private bool isFlipped;
+    [SerializeField] private bool isFlipped2;
 
     [SerializeField] private float motorForce;
     [SerializeField] private float breakForce;
@@ -31,7 +32,9 @@ public class CarController : NetworkBehaviour
     [SerializeField] private Transform rearRightWheelTransform;
 
     [SerializeField] GameObject player;
+    [SerializeField] Camera playerCamera;
 
+    //vira pro lado certo o tempo todo mas eu não gosto
     //private void Update()
     //{
     //    if (player.transform.eulerAngles.z > 90 || player.transform.eulerAngles.z < -90)
@@ -39,7 +42,16 @@ public class CarController : NetworkBehaviour
     //        isFlipped = true;
     //    }
     //}
+    private void Start()
+    {
+        if (IsOwner)
+        {
+            playerCamera.enabled = true;
 
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
     private void FixedUpdate()
     {
         if (!IsOwner)
@@ -59,6 +71,7 @@ public class CarController : NetworkBehaviour
         verticalInput = Input.GetAxis(VERTICAL);
         isBreaking = Input.GetKey(KeyCode.Space);
         isFlipped = Input.GetKey(KeyCode.R);
+        isFlipped2 = Input.GetKey(KeyCode.E);
     }
 
     private void HandleMotor()
@@ -105,10 +118,15 @@ public class CarController : NetworkBehaviour
     private void FailSafe() 
     {
         Vector3 correct = new Vector3(player.transform.eulerAngles.x, player.transform.eulerAngles.y, 0f);
+        Vector3 correct2 = new Vector3(0f, player.transform.eulerAngles.y, player.transform.eulerAngles.z);
 
         if (isFlipped)
         {
             player.transform.localEulerAngles = correct;
+        }
+        if (isFlipped2)
+        {
+            player.transform.localEulerAngles = correct2;
         }
     }
 }
